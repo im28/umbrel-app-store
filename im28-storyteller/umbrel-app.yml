@@ -1,0 +1,39 @@
+manifestVersion: 1
+id: im28-storyteller
+category: media
+name: Storyteller
+icon: https://cdn.jsdelivr.net/gh/im28/umbrel-app-store@main/im28-storyteller/icon.png
+version: "2.14.23"
+tagline: Sync your ebooks and audiobooks into read-along books
+description: >-
+  Storyteller takes an ebook and an audiobook you already own, transcribes the audio
+  locally with whisper.cpp, and aligns the two into a "readaloud" EPUB that highlights each
+  sentence as it's narrated. Read and listen in the web reader, the Storyteller iOS and
+  Android apps, or any EPUB 3 reader that supports Media Overlays.
+
+
+  Put books in the "Books" folder in Files, with one folder per book. Storyteller auto-imports
+  them from /library. You can also upload books in the web UI.
+
+
+  Storyteller has its own user accounts. The first visit creates the admin account.
+  Umbrel's login is turned off for this app, so the mobile apps can reach the API.
+
+
+  This laptop is CPU-only. Keep the tiny Whisper model (the default) and set Max track length
+  to 1 hour or less. Expect alignment to take several hours per book.
+developer: Shane Friedman (Storyteller), packaged by im28
+website: https://storyteller-platform.dev
+dependencies: []
+repo: https://gitlab.com/storyteller-platform/storyteller
+support: https://gitlab.com/storyteller-platform/storyteller/-/issues
+port: 8001
+gallery: []
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+backupIgnore:
+  - data/tmp/*
+releaseNotes: "First release in im28's store. Pinned to Storyteller 2.14.23 (stable)."
+submitter: im28
+submission: ""

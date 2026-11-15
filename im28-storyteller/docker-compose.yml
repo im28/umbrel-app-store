@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+  app_proxy:
+    environment:
+      APP_HOST: im28-storyteller_web_1
+      APP_PORT: 8001
+      # Storyteller has its own accounts, and the mobile apps call its API directly.
+      PROXY_AUTH_ADD: "false"
+
+  web:
+    # "latest" == web-v2.14.23 on 2026-11-15. 3.0 is still beta.
+    image: registry.gitlab.com/storyteller-platform/storyteller:web-v2.14.23@sha256:1ae16005572519f56abac2d65ab879d20115cd257fde7e89cf739ea82aed4de3
+    restart: on-failure
+    stop_grace_period: 1m
+    environment:
+      # Signs auth tokens. APP_SEED is a stable per-app secret derived by umbreld, so nothing is stored in the repo.
+      STORYTELLER_SECRET_KEY: ${APP_SEED}
+      # Upstream: drop privileges via PUID/PGID. Don't set `user:`.
+      PUID: "1000"
+      PGID: "1000"
+    volumes:
+      - ${APP_DATA_DIR}/data:/data
+      # Watched folder (Files → Books, one folder per book). Read-write, because Storyteller writes metadata edits back.
+      - ${UMBREL_ROOT}/home/Books:/library
+    # Transcription can use several GB of RAM. Cap it so Immich and umbrelOS survive a heavy book,
+    # and lower its CPU weight so the dashboard and Immich stay responsive.
+    mem_limit: 4g
+    cpu_shares: 512
