@@ -1,0 +1,28 @@
+manifestVersion: 1
+id: im28-photos-share
+category: files
+name: Photos Share
+version: "4.1.2"
+tagline: Public share links for Immich without exposing Immich
+description: >-
+  Immich Public Proxy behind its own Tailscale Funnel node. Only the /share/ paths of
+  links created in Immich are reachable from the internet. The Immich login, API and
+  admin pages stay private. The proxy is read-only and stateless.
+
+
+  Requires: Immich installed, a Tailscale auth key tagged tag:photos-public placed at
+  ${APP_DATA_DIR}/data/tailscale/authkey, and Immich's External domain set to
+  https://photos.<tailnet>.ts.net
+developer: Alan Grainger (proxy), packaged by im28
+website: https://github.com/alangrainger/immich-public-proxy
+dependencies:
+  - immich
+repo: https://github.com/alangrainger/immich-public-proxy
+support: https://github.com/alangrainger/immich-public-proxy/issues
+port: 3870
+gallery: []
+path: "/share/healthcheck"
+defaultPassword: ""
+releaseNotes: "Immich Public Proxy 4.1.2, Tailscale 1.104.7."
+submitter: im28
+submission: ""
