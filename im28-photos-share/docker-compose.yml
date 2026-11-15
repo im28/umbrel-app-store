@@ -28,6 +28,8 @@ services:
       TS_STATE_DIR: /var/lib/tailscale
       TS_USERSPACE: "true"
       TS_AUTHKEY: file:/var/lib/tailscale/authkey
+      # Log in only when there is no saved state, so the one-time key file can be deleted after first boot.
+      TS_AUTH_ONCE: "true"
       TS_EXTRA_ARGS: --advertise-tags=tag:photos-public
       TS_SERVE_CONFIG: /config/serve.json
     volumes:

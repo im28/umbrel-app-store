@@ -2,7 +2,7 @@ manifestVersion: 1
 id: im28-photos-share
 category: files
 name: Photos Share
-version: "4.1.2-1"
+version: "4.1.2-2"
 tagline: Public share links for Immich without exposing Immich
 description: >-
   Immich Public Proxy behind its own Tailscale Funnel node. Only the /share/ paths of
@@ -23,6 +23,6 @@ port: 3870
 gallery: []
 path: "/share/healthcheck"
 defaultPassword: ""
-releaseNotes: "Hardened config: 15 s share cache so revoked links stop quickly, no location map links, home page off."
+releaseNotes: "Sidecar logs in only once (TS_AUTH_ONCE). Hardened config: 15 s share cache so revoked links stop quickly, no location map links, home page off."
 submitter: im28
 submission: ""
