@@ -11,11 +11,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Tools agents expect on a dev box, then the libraries and fonts T3 Code's headless Chrome needs
 # (the list `t3 browser setup` installs: apps/server/src/preview/PreviewBrowserHost.ts).
+# `adb` is both the client agents use and the server the app's `adb` service runs for a USB Android phone.
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       ca-certificates curl wget git openssh-client gnupg \
       jq less procps unzip zip xz-utils bzip2 file ripgrep fd-find tree \
       python3 python3-venv python3-pip make \
+      adb \
       tzdata locales \
       libnss3 libglib2.0-0t64 libatk1.0-0t64 libatk-bridge2.0-0t64 libatspi2.0-0t64 libdbus-1-3 \
       libx11-6 libxcb1 libxcomposite1 libxdamage1 libxext6 libxfixes3 libxrandr2 libxkbcommon0 \
