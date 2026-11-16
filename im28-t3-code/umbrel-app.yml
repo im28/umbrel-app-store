@@ -1,0 +1,48 @@
+manifestVersion: 1
+id: im28-t3-code
+category: developer
+name: T3 Code
+icon: https://cdn.jsdelivr.net/gh/im28/umbrel-app-store@main/im28-t3-code/icon.png
+# The package version. T3 Code itself updates from the T3 apps, so it is not pinned here.
+version: "1.0.0"
+tagline: Run Claude Code agents on your Umbrel and talk to them from anywhere
+description: >-
+  T3 Code runs coding agents such as Claude Code on a machine that stays on, and lets you
+  drive them from the T3 Code desktop, web and mobile apps. This package runs the T3 Code
+  server in a container, so your agents and their projects live on the Umbrel and keep
+  working while your computer is off.
+
+
+  First start downloads T3 Code and Claude Code into the app's data folder, which takes a
+  minute or two. Both update themselves afterwards: the T3 apps offer to update the server
+  when it falls behind.
+
+
+  Umbrel's login is turned off for this app, because the T3 apps connect to it directly.
+  T3 Code has its own lock: every device needs a one-time pairing link. Create one on the
+  Umbrel with "docker exec im28-t3-code_server_1 t3-pair-url" and open it on the device.
+  Then sign in to Claude once with "claude auth login" in a T3 Code terminal.
+
+
+  Agents work inside the container. They see the app's data folder (projects go in
+  ~/projects) and nothing else on the Umbrel.
+developer: T3 Tools (T3 Code), packaged by im28
+website: https://t3.codes
+dependencies: []
+repo: https://github.com/pingdotgg/t3code
+support: https://github.com/im28/umbrel-app-store/issues
+port: 3773
+gallery: []
+path: ""
+defaultUsername: ""
+defaultPassword: ""
+backupIgnore:
+  # Downloads that the app fetches again on start: server and Claude Code versions, Chrome, caches.
+  - data/.t3/runtime/versions/*
+  - data/.t3/caches/*
+  - data/.local/share/claude/versions/*
+  - data/.cache/*
+  - data/.npm/*
+releaseNotes: "First release in im28's store. Debian 13 with Node 24, git, gh and Python. T3 Code (nightly) and Claude Code install on first start."
+submitter: im28
+submission: ""

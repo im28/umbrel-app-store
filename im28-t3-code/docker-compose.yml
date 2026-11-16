@@ -1,0 +1,42 @@
+version: "3.7"
+
+services:
+  app_proxy:
+    environment:
+      APP_HOST: im28-t3-code_server_1
+      APP_PORT: 3773
+      # T3 Code has its own device pairing, and the T3 desktop and mobile apps call its API directly.
+      PROXY_AUTH_ADD: "false"
+
+  server:
+    # Built from images/t3-code by .github/workflows/t3-code-image.yml in this store's repo.
+    # Operating system and tools only: T3 Code and Claude Code live in the data volume and update themselves.
+    image: ghcr.io/im28/umbrel-t3-code:latest@sha256:334bf2d458aec6958309307a5b8dfc0e8cf6305e47507a1aa59fb266ee1b5f40
+    # Shown as the environment's name in the T3 apps.
+    hostname: umbrel
+    # Agents start many short-lived processes. An init process reaps them and forwards SIGTERM.
+    init: true
+    restart: on-failure
+    stop_grace_period: 1m
+    user: "1000:1000"
+    environment:
+      # Release train to install on first start. The server follows it afterwards. Nightly matches the PC's desktop app.
+      T3CODE_CHANNEL: nightly
+      T3CODE_PORT: "3773"
+      # Accept connections from private addresses (the app proxy). A pairing code is still required.
+      T3CODE_LAN: "true"
+      # Chrome cannot start its own sandbox inside an unprivileged container. The container is the sandbox.
+      T3CODE_SERVER_BROWSER_SANDBOX: "0"
+      # Base URL that `t3-pair-url` puts in pairing links.
+      T3_PUBLIC_URL: http://${DEVICE_DOMAIN_NAME}:3773
+    volumes:
+      # The whole home directory: T3 Code and Claude Code installs, their logins, and the projects.
+      - ${APP_DATA_DIR}/data:/home/t3
+    # Each agent turn is a Claude Code process of a few hundred MB. Cap the app so a runaway agent is
+    # killed inside the container and Immich and umbrelOS keep running.
+    mem_limit: 3g
+    cpu_shares: 768
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
