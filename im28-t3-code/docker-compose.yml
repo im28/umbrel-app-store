@@ -11,7 +11,7 @@ services:
   server:
     # Built from images/t3-code by .github/workflows/t3-code-image.yml in this store's repo.
     # Operating system and tools only: T3 Code and Claude Code live in the data volume and update themselves.
-    image: ghcr.io/im28/umbrel-t3-code:latest@sha256:334bf2d458aec6958309307a5b8dfc0e8cf6305e47507a1aa59fb266ee1b5f40
+    image: ghcr.io/im28/umbrel-t3-code:latest@sha256:e7a176d727636a7e6a5eb3f248a07fe6536d893283510d5688375c288973cc8e
     # Shown as the environment's name in the T3 apps.
     hostname: umbrel
     # Agents start many short-lived processes. An init process reaps them and forwards SIGTERM.
@@ -29,13 +29,50 @@ services:
       T3CODE_SERVER_BROWSER_SANDBOX: "0"
       # Base URL that `t3-pair-url` puts in pairing links.
       T3_PUBLIC_URL: http://${DEVICE_DOMAIN_NAME}:3773
+      # `adb` in this container talks to the adb service below instead of starting its own server.
+      ADB_SERVER_SOCKET: localfilesystem:/run/adb/adb.sock
     volumes:
       # The whole home directory: T3 Code and Claude Code installs, their logins, and the projects.
       - ${APP_DATA_DIR}/data:/home/t3
+      # The adb service's socket. Read-only: agents can use the socket but not replace it.
+      - ${APP_DATA_DIR}/adb/run:/run/adb:ro
     # Each agent turn is a Claude Code process of a few hundred MB. Cap the app so a runaway agent is
     # killed inside the container and Immich and umbrelOS keep running.
     mem_limit: 3g
     cpu_shares: 768
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+  adb:
+    # Optional: lets agents drive an Android phone plugged into the Umbrel by USB (USB debugging on).
+    # This service owns the USB link and runs the adb server, so the agent container needs no device
+    # access and stays unprivileged. With no phone attached it idles.
+    image: ghcr.io/im28/umbrel-t3-code:latest@sha256:e7a176d727636a7e6a5eb3f248a07fe6536d893283510d5688375c288973cc8e
+    init: true
+    restart: on-failure
+    # Root only to open the USB device nodes (root:root on umbrelOS). It holds no capabilities.
+    user: "0:0"
+    entrypoint:
+      - sh
+      - -c
+      - umask 000; rm -f /run/adb/adb.sock; exec adb -L localfilesystem:/run/adb/adb.sock server nodaemon
+    environment:
+      # The server's key pair lives in $HOME/.android. The phone remembers it after "Always allow".
+      HOME: /adb/home
+    # USB only: the server needs no network, and nothing else on the Umbrel can reach it.
+    network_mode: none
+    volumes:
+      # Mounted as a directory, with the cgroup rule below, so a phone plugged in later is picked up.
+      - /dev/bus/usb:/dev/bus/usb
+      # Docker creates these two as root-owned directories, which this service needs. Do not pre-create them.
+      - ${APP_DATA_DIR}/adb/run:/run/adb
+      - ${APP_DATA_DIR}/adb/home:/adb/home
+    device_cgroup_rules:
+      # USB device nodes (character major 189).
+      - "c 189:* rwm"
+    mem_limit: 128m
     cap_drop:
       - ALL
     security_opt:

@@ -4,7 +4,7 @@ category: developer
 name: T3 Code
 icon: https://cdn.jsdelivr.net/gh/im28/umbrel-app-store@main/im28-t3-code/icon.png
 # The package version. T3 Code itself updates from the T3 apps, so it is not pinned here.
-version: "1.0.1"
+version: "1.1.0"
 tagline: Run Claude Code agents on your Umbrel and talk to them from anywhere
 description: >-
   T3 Code runs coding agents such as Claude Code on a machine that stays on, and lets you
@@ -26,6 +26,10 @@ description: >-
 
   Agents work inside the container. They see the app's data folder (projects go in
   ~/projects) and nothing else on the Umbrel.
+
+
+  Optional: plug an Android phone with USB debugging into the Umbrel and agents can drive it
+  with "adb". Accept the "Allow USB debugging" prompt on the phone once.
 developer: T3 Tools (T3 Code), packaged by im28
 website: https://t3.codes
 dependencies: []
@@ -44,6 +48,6 @@ backupIgnore:
   - data/.local/share/claude/versions/*
   - data/.cache/*
   - data/.npm/*
-releaseNotes: "Backups now skip the headless Chrome download (about 280 MB), which T3 Code fetches again when needed."
+releaseNotes: "Agents can now drive an Android phone plugged into the Umbrel by USB: the image includes adb, and a small adb service owns the USB link so the agent container stays unprivileged."
 submitter: im28
 submission: ""
