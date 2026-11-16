@@ -4,7 +4,7 @@ category: developer
 name: T3 Code
 icon: https://cdn.jsdelivr.net/gh/im28/umbrel-app-store@main/im28-t3-code/icon.png
 # The package version. T3 Code itself updates from the T3 apps, so it is not pinned here.
-version: "1.0.0"
+version: "1.0.1"
 tagline: Run Claude Code agents on your Umbrel and talk to them from anywhere
 description: >-
   T3 Code runs coding agents such as Claude Code on a machine that stays on, and lets you
@@ -40,9 +40,10 @@ backupIgnore:
   # Downloads that the app fetches again on start: server and Claude Code versions, Chrome, caches.
   - data/.t3/runtime/versions/*
   - data/.t3/caches/*
+  - data/.t3/tools/*
   - data/.local/share/claude/versions/*
   - data/.cache/*
   - data/.npm/*
-releaseNotes: "First release in im28's store. Debian 13 with Node 24, git, gh and Python. T3 Code (nightly) and Claude Code install on first start."
+releaseNotes: "Backups now skip the headless Chrome download (about 280 MB), which T3 Code fetches again when needed."
 submitter: im28
 submission: ""
