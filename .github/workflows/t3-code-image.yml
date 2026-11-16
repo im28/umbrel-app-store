@@ -1,0 +1,55 @@
+# Builds the runtime image for the im28-t3-code app and pushes it to GitHub Container Registry.
+#
+# The image holds only the operating system and tools (see images/t3-code/Dockerfile). T3 Code and
+# Claude Code install into the app's data volume and update themselves, so this only needs to
+# run when the Dockerfile or its scripts change.
+#
+# After a run, copy the digest from the job summary into im28-t3-code/docker-compose.yml.
+name: t3-code image
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - images/t3-code/**
+      - .github/workflows/t3-code-image.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: images/t3-code
+          platforms: linux/amd64
+          push: true
+          provenance: false
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/umbrel-t3-code:latest
+            ghcr.io/${{ github.repository_owner }}/umbrel-t3-code:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.description=Runtime for the T3 Code server on umbrelOS (im28-t3-code)
+            org.opencontainers.image.licenses=MIT
+
+      - name: Digest
+        run: |
+          echo "### ghcr.io/${{ github.repository_owner }}/umbrel-t3-code" >> "$GITHUB_STEP_SUMMARY"
+          echo '`${{ steps.build.outputs.digest }}`' >> "$GITHUB_STEP_SUMMARY"
+          echo "digest=${{ steps.build.outputs.digest }}"
